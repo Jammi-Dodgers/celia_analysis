@@ -1,4 +1,5 @@
 # .gitignore
 data/
+organised_data/
 target_photos/
 espec_scans/
