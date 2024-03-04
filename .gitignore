@@ -2,5 +2,6 @@
 data/
 organised_data/
 target_photos/
-espec_scans/
-*.txt
+THZ_2024/
+CELIATHZ/
+*zip
