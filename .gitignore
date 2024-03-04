@@ -1,3 +1,7 @@
 # .gitignore
 data/
+organised_data/
 target_photos/
+THZ_2024/
+CELIATHZ/
+*zip
