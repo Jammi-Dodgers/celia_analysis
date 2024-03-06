@@ -208,12 +208,15 @@ def open_emp_energy(shots, function= lambda x:x, silent= False):
 
     return shot_no, data
 
-def read_diagnostic_data(requested_data, function= lambda x:x , silent= False): #Currently supports the xray cam, pyro oscilloscope and the emp oscilloscope. Doesn't support target photos, espec, focal spot cam and pyrocams. 
+def read_diagnostic_data(requested_data, functions= None, silent= False): #Currently supports the xray cam, pyro oscilloscope and the emp oscilloscope. Doesn't support target photos, espec, focal spot cam and pyrocams. 
     data_path = "organised_data\\"
     dictionary = {"shot":[]}
     emp_oscilloscope = ["time","bdot","tof","diode"]
     pyro_oscilloscope = ["Ch1","Ch2","Ch3","Ch4","pyro_time"]
     xray_cam = ["xray", "xray_raw"]
+
+    if functions == None:
+        functions = {key: lambda x:x for key in requested_data.keys()}
 
     all_file_directories = [root for root, dirs, files in os.walk(data_path) for file in files]
     all_file_directories = np.array(all_file_directories)
@@ -223,13 +226,13 @@ def read_diagnostic_data(requested_data, function= lambda x:x , silent= False): 
 
     for request, shots in requested_data.items():
         if request in pyro_oscilloscope:
-            new_shots, new_data = open_pyro_oscilloscope(request, shots, all_file_directories, all_file_names, function= function, silent= silent)
+            new_shots, new_data = open_pyro_oscilloscope(request, shots, all_file_directories, all_file_names, function= functions[request], silent= silent)
         elif request in emp_oscilloscope:
-            new_shots, new_data = open_emp_oscilloscope(request, shots, all_file_directories, all_file_names, function= function, silent= silent)
+            new_shots, new_data = open_emp_oscilloscope(request, shots, all_file_directories, all_file_names, function= functions[request], silent= silent)
         elif request in xray_cam:
-            new_shots, new_data = open_xray_photos(request, shots, all_file_directories, all_file_names, function= function, silent= silent) 
+            new_shots, new_data = open_xray_photos(request, shots, all_file_directories, all_file_names, function= functions[request], silent= silent) 
         elif request == "energy":
-            new_shots, new_data = open_emp_energy(shots, function= function, silent= silent)
+            new_shots, new_data = open_emp_energy(shots, function= functions[request], silent= silent)
         else:
             new_shots, new_data = [], []
             print("WARNING!! {0} is not a recognised data type.".format(request))
