@@ -143,7 +143,7 @@ def filter_files(file_directories, file_names, regex_code):
     return filtered_file_paths, filtered_file_directories, filtered_file_names
 
 def open_pyro_oscilloscope(requested_data, shots, file_directories, file_names, function= lambda x:x, silent= False):
-    channel = "Ch1" if requested_data == "pyro_time" else requested_data
+    channel = "(Ch1|Ch2|Ch3|Ch4)" if requested_data == "pyro_time" else requested_data
     regex_code = ".*SHOT("+'|'.join(shots)+")[^0-9]*[0-9]{3}[^0-9].*"+channel+".csv"
     filtered_file_paths, _, filtered_file_names = filter_files(file_directories, file_names, regex_code)
                             
@@ -208,6 +208,16 @@ def open_emp_energy(shots, function= lambda x:x, silent= False):
 
     return shot_no, data
 
+def open_espec_scans(shots, file_directories, file_names, function= lambda x:x, silent= False):
+    regex_code = "^IP.*\.tif$"
+
+    filtered_file_paths, filtered_file_directories, filtered_file_names = filter_files(file_directories, file_names, regex_code)
+    pass
+
+
+
+
+
 def read_diagnostic_data(requested_data, functions= None, silent= False): #Currently supports the xray cam, pyro oscilloscope and the emp oscilloscope. Doesn't support target photos, espec, focal spot cam and pyrocams. 
     data_path = "organised_data\\"
     dictionary = {"shot":[]}
@@ -233,6 +243,8 @@ def read_diagnostic_data(requested_data, functions= None, silent= False): #Curre
             new_shots, new_data = open_xray_photos(request, shots, all_file_directories, all_file_names, function= functions[request], silent= silent) 
         elif request == "energy":
             new_shots, new_data = open_emp_energy(shots, function= functions[request], silent= silent)
+        elif request == "espec":
+            new_shots, new_data = open_espec_scans(shots, all_file_directories, all_file_names, function= functions[request], silent= silent)
         else:
             new_shots, new_data = [], []
             print("WARNING!! {0} is not a recognised data type.".format(request))
