@@ -27,6 +27,15 @@ def transform_list(matrix):
 
 ############# FITTING AND SMOOTHING ################
 
+def gaussian(x, center, FWHM, height):
+    sigma = (8 *np.log(2))**-0.5 *FWHM
+    exponent = -(1/2) *(x -center)**2 /(sigma**2)
+    return height*np.exp(exponent)
+
+def half_gaussian(x, FWHM, height):
+    center = np.min(x)
+    return gaussian(x, center, FWHM, height)
+
 def polynomial(x, *coeffs):
     x = np.array(x)
     y = np.sum([coeff*x**n for n, coeff in enumerate(coeffs)], axis= 0)
